@@ -48,7 +48,7 @@ jobs:
         uses: actions/upload-artifact@v6
         with:
           name: jars
-          path: /**/*.jar
+          path: ./**/*.jar
 
   proxy-docker-build:
     # if: github.event.pull_request.merged == true
