@@ -76,6 +76,7 @@ jobs:
           tags: ghcr.io/${{ github.repository_owner }}/${{ matrix.service }}:develop
           context: dsf-docker/${{ matrix.service }}
           file: dsf-docker/${{ matrix.service }}/Dockerfile
+          platforms: linux/amd64,linux/arm64
     
 
       
