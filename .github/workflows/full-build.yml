@@ -44,11 +44,13 @@ jobs:
         with:
           name: fhir_proxy_client_issuing_cas
           path: dsf-docker/fhir_proxy/ca/client_issuing_cas/*.crt
-      - name: Upload jar files
+      - name: Upload bpe_proxy files
         uses: actions/upload-artifact@v6
         with:
-          name: jars
-          path: ./**/*.jar
+          name: bpe_proxy
+          path: |
+            dsf-docker/bpe_proxy/ca/client_ca_chains/*.crt
+            dsf-docker/bpe_proxy/ca/client_issuing_cas/*.crt
 
   proxy-docker-build:
     # if: github.event.pull_request.merged == true
