@@ -44,6 +44,11 @@ jobs:
         with:
           name: fhir_proxy_client_issuing_cas
           path: dsf-docker/fhir_proxy/ca/client_issuing_cas/*.crt
+      - name: Upload jar files
+        uses: actions/upload-artifact@v6
+        with:
+          name: jars
+          path: /**/*.jar
 
   proxy-docker-build:
     # if: github.event.pull_request.merged == true
@@ -85,6 +90,3 @@ jobs:
           context: dsf-docker/${{ matrix.service }}
           file: dsf-docker/${{ matrix.service }}/Dockerfile
           platforms: linux/amd64,linux/arm64
-    
-
-      
