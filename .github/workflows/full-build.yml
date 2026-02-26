@@ -103,6 +103,7 @@ jobs:
             dsf-bpe/dsf-bpe-server-jetty/docker/ca/client_ca_chains/*.crt
             dsf-bpe/dsf-bpe-server-jetty/docker/ca/server_root_cas/*.crt
             dsf-bpe/dsf-bpe-server-jetty/docker/lib/*.jar
+            dsf-bpe/dsf-bpe-server-jetty/docker/dsf_bpe.jar
       - name: Upload fhir files
         uses: actions/upload-artifact@v6
         with:
@@ -111,6 +112,7 @@ jobs:
             dsf-fhir/dsf-fhir-server-jetty/docker/ca/client_ca_chains/*.crt
             dsf-fhir/dsf-fhir-server-jetty/docker/ca/server_root_cas/*.crt
             dsf-fhir/dsf-fhir-server-jetty/docker/lib/*.jar
+            dsf-fhir/dsf-fhir-server-jetty/docker/dsf_fhir.jar
 
   app-docker-build:
     # if: github.event.pull_request.merged == true
