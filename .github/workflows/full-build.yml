@@ -141,8 +141,8 @@ jobs:
         with:
           push: true
           tags: ghcr.io/${{ github.repository_owner }}/${{ matrix.service }}:develop
-          context: dsf-docker/${{ matrix.service }}
-          file: dsf-docker/${{ matrix.service }}/Dockerfile
+          context: dsf-${{ matrix.service }}/dsf-${{ matrix.service }}-server-jetty/docker
+          file: dsf-${{ matrix.service }}/dsf-${{ matrix.service }}-server-jetty/docker/Dockerfile
           platforms: linux/amd64,linux/arm64
           cache-from: type=gha,scope=${{ matrix.service }}
           cache-to: type=gha,mode=max,scope=${{ matrix.service }}
