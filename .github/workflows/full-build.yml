@@ -89,7 +89,7 @@ jobs:
           java-version: 25
           cache: 'maven'
       - name: Full Maven Build
-        run: mvn install --batch-mode --fail-at-end
+        run: mvn verify --batch-mode --fail-at-end -DforkCount=2
       - name: Upload bpe files
         uses: actions/upload-artifact@v6
         with:
