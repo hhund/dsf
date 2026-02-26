@@ -24,33 +24,20 @@ jobs:
           cache: 'maven'
       - name: Minimal Maven Build
         run: mvn install --batch-mode --fail-at-end -P!generate-source-and-javadoc-jars -Dimpsort.skip=true -Dformatter.skip=true -Dlicense.skip=true -Denforcer.skip -DskipTests
-      - name: Upload bpe_proxy client_ca_chains
-        uses: actions/upload-artifact@v6
-        with:
-          name: bpe_proxy_client_ca_chains
-          path: dsf-docker/bpe_proxy/ca/client_ca_chains/*.crt
-      - name: Upload bpe_proxy client_issuing_cas
-        uses: actions/upload-artifact@v6
-        with:
-          name: bpe_proxy_client_issuing_cas
-          path: dsf-docker/bpe_proxy/ca/client_issuing_cas/*.crt
-      - name: Upload fhir_proxy client_ca_chains
-        uses: actions/upload-artifact@v6
-        with:
-          name: fhir_proxy_client_ca_chains
-          path: dsf-docker/fhir_proxy/ca/client_ca_chains/*.crt
-      - name: Upload fhir_proxy client_issuing_cas
-        uses: actions/upload-artifact@v6
-        with:
-          name: fhir_proxy_client_issuing_cas
-          path: dsf-docker/fhir_proxy/ca/client_issuing_cas/*.crt
-      - name: Upload bpe_proxy files
+      - name: Upload bpe_proxy ca files
         uses: actions/upload-artifact@v6
         with:
           name: bpe_proxy
           path: |
             dsf-docker/bpe_proxy/ca/client_ca_chains/*.crt
             dsf-docker/bpe_proxy/ca/client_issuing_cas/*.crt
+      - name: Upload fhir_proxy ca files
+        uses: actions/upload-artifact@v6
+        with:
+          name: fhir_proxy
+          path: |
+            dsf-docker/fhir_proxy/ca/client_ca_chains/*.crt
+            dsf-docker/fhir_proxy/ca/client_issuing_cas/*.crt
 
   proxy-docker-build:
     # if: github.event.pull_request.merged == true
@@ -64,16 +51,11 @@ jobs:
     steps:
       - name: Checkout repository 
         uses: actions/checkout@v6
-      - name: Download client_ca_chains
+      - name: Download ca files
         uses: actions/download-artifact/@v7
         with:
-          name: ${{ matrix.service }}_client_ca_chains
-          path: dsf-docker/${{ matrix.service }}/ca/client_ca_chains/
-      - name: Download client_issuing_cas
-        uses: actions/download-artifact/@v7
-        with:
-          name: ${{ matrix.service }}_client_issuing_cas
-          path: dsf-docker/${{ matrix.service }}/ca/client_issuing_cas/
+          name: ${{ matrix.service }}
+          path: dsf-docker/${{ matrix.service }}/ca/
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
       - name: Set up Buildx
