@@ -23,7 +23,7 @@ jobs:
           java-version: 25
           cache: 'maven'
       - name: Minimal Maven Build
-        run: mvn install --batch-mode --fail-at-end -P!generate-source-and-javadoc-jars -Dimpsort.skip=true -Dformatter.skip=true -Dlicense.skip=true -Denforcer.skip -DskipTests
+        run: mvn package --batch-mode --fail-at-end -P!generate-source-and-javadoc-jars -Dimpsort.skip=true -Dformatter.skip=true -Dlicense.skip=true -Denforcer.skip -DskipTests -Dmaven.buildNumber.skip=true -Denforcer.skip -DskipShadePlugin=true
       - name: Upload bpe_proxy ca files
         uses: actions/upload-artifact@v6
         with:
@@ -47,15 +47,19 @@ jobs:
       packages: write
     strategy:
       matrix:
-        service: [bpe_proxy, fhir_proxy]
+        image:
+          - name: bpe_proxy
+            context: dsf-docker/bpe_proxy
+          - name: fhir_proxy
+            context: dsf-docker/fhir_proxy
     steps:
       - name: Checkout repository 
         uses: actions/checkout@v6
       - name: Download ca files
         uses: actions/download-artifact/@v7
         with:
-          name: ${{ matrix.service }}
-          path: dsf-docker/${{ matrix.service }}/ca/
+          name: ${{ matrix.image.name }}
+          path: ${{ matrix.image.context }}/ca/
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
       - name: Set up Buildx
@@ -70,12 +74,11 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           push: true
-          tags: ghcr.io/${{ github.repository_owner }}/${{ matrix.service }}:develop
-          context: dsf-docker/${{ matrix.service }}
-          file: dsf-docker/${{ matrix.service }}/Dockerfile
+          tags: ghcr.io/${{ github.repository_owner }}/${{ matrix.image.name }}:develop
+          context: ${{ matrix.image.context }}
           platforms: linux/amd64,linux/arm64
-          cache-from: type=gha,scope=${{ matrix.service }}
-          cache-to: type=gha,mode=max,scope=${{ matrix.service }}
+          cache-from: type=gha,scope=${{ matrix.image.name }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.image.name }}
 
   maven-full-build:
     runs-on: ubuntu-latest
@@ -117,15 +120,19 @@ jobs:
       packages: write
     strategy:
       matrix:
-        service: [bpe, fhir]
+        image:
+          - name: bpe
+            context: dsf-bpe/dsf-bpe-server-jetty/docker
+          - name: fhir
+            context: dsf-fhir/dsf-fhir-server-jetty/docker
     steps:
       - name: Checkout repository 
         uses: actions/checkout@v6
       - name: Download ca and jar files
         uses: actions/download-artifact/@v7
         with:
-          name: ${{ matrix.service }}
-          path: dsf-${{ matrix.service }}/dsf-${{ matrix.service }}-server-jetty/docker/
+          name: ${{ matrix.image.name }}
+          path: ${{ matrix.image.context }}
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
       - name: Set up Buildx
@@ -136,13 +143,14 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+      - name: List workspace files
+        run: ls -la -R
       - name: Build and Push
         uses: docker/build-push-action@v6
         with:
           push: true
-          tags: ghcr.io/${{ github.repository_owner }}/${{ matrix.service }}:develop
-          context: dsf-${{ matrix.service }}/dsf-${{ matrix.service }}-server-jetty/docker
-          file: dsf-${{ matrix.service }}/dsf-${{ matrix.service }}-server-jetty/docker/Dockerfile
+          tags: ghcr.io/${{ github.repository_owner }}/${{ matrix.image.name }}:develop
+          context: ${{ matrix.image.context }}
           platforms: linux/amd64,linux/arm64
-          cache-from: type=gha,scope=${{ matrix.service }}
-          cache-to: type=gha,mode=max,scope=${{ matrix.service }}
+          cache-from: type=gha,scope=${{ matrix.image.name }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.image.name }}
