@@ -38,6 +38,11 @@ jobs:
           path: |
             dsf-docker/fhir_proxy/ca/client_ca_chains/*.crt
             dsf-docker/fhir_proxy/ca/client_issuing_cas/*.crt
+      - name: Upload target folders
+        uses: actions/upload-artifact@v6
+        with:
+          name: target
+          path: ./**/target
 
   proxy-docker-build:
     # if: github.event.pull_request.merged == true
