@@ -89,7 +89,7 @@ jobs:
       - name: Set up cosign
         uses: sigstore/cosign-installer@v3
       - name: Attach SBOM
-        run: cosign attach sbom --sbom sbom.json ghcr.io/${{ github.repository_owner }}/${{ matrix.image.name }}@${DIGEST}
+        run: cosign attest --yes --predicate sbom.json --type cyclonedx ghcr.io/${{ github.repository_owner }}/${{ matrix.image.name }}@${DIGEST}
       - name: Sign image
         run: cosign sign --yes ghcr.io/${{ github.repository_owner }}/${{ matrix.image.name }}@${DIGEST}
 
@@ -179,6 +179,6 @@ jobs:
       - name: Set up cosign
         uses: sigstore/cosign-installer@v3
       - name: Attach SBOM
-        run: cosign attach sbom --sbom sbom.json ghcr.io/${{ github.repository_owner }}/${{ matrix.image.name }}@${DIGEST}
+        run: cosign attest --yes --predicate sbom.json --type cyclonedx ghcr.io/${{ github.repository_owner }}/${{ matrix.image.name }}@${DIGEST}
       - name: Sign image
         run: cosign sign --yes ghcr.io/${{ github.repository_owner }}/${{ matrix.image.name }}@${DIGEST}
