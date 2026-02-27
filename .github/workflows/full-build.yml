@@ -45,6 +45,7 @@ jobs:
     needs: maven-quick-build
     permissions:
       packages: write
+      id-token: write
     strategy:
       matrix:
         image:
@@ -133,6 +134,7 @@ jobs:
     needs: maven-full-build
     permissions:
       packages: write
+      id-token: write
     strategy:
       matrix:
         image:
