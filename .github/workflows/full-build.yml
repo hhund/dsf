@@ -72,6 +72,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build and Push
         uses: docker/build-push-action@v6
+        id: push
         with:
           push: true
           tags: ghcr.io/${{ github.repository_owner }}/${{ matrix.image.name }}:develop
@@ -79,6 +80,18 @@ jobs:
           platforms: linux/amd64,linux/arm64
           cache-from: type=gha,scope=${{ matrix.image.name }}
           cache-to: type=gha,mode=max,scope=${{ matrix.image.name }}
+      - name: Export digest
+        run: echo "DIGEST=${{ steps.push.outputs.digest }}" >> $GITHUB_ENV
+      - name: Set up syft
+        uses: anchore/sbom-action/download-syft@v0
+      - name: Generate SBOM
+        run: syft ghcr.io/${{ github.repository_owner }}/${{ matrix.image.name }}@${DIGEST} -o cyclonedx-json > sbom.json
+      - name: Set up cosign
+        uses: sigstore/cosign-installer@v3
+      - name: Attach SBOM
+        run: cosign attach sbom --sbom sbom.json ghcr.io/${{ github.repository_owner }}/${{ matrix.image.name }}@${DIGEST}
+      - name: Sign image
+        run: cosign sign --yes ghcr.io/${{ github.repository_owner }}/${{ matrix.image.name }}@${DIGEST}
 
   maven-full-build:
     runs-on: ubuntu-latest
@@ -149,6 +162,7 @@ jobs:
         run: ls -la -R
       - name: Build and Push
         uses: docker/build-push-action@v6
+        id: push
         with:
           push: true
           tags: ghcr.io/${{ github.repository_owner }}/${{ matrix.image.name }}:develop
@@ -156,3 +170,15 @@ jobs:
           platforms: linux/amd64,linux/arm64
           cache-from: type=gha,scope=${{ matrix.image.name }}
           cache-to: type=gha,mode=max,scope=${{ matrix.image.name }}
+      - name: Export digest
+        run: echo "DIGEST=${{ steps.push.outputs.digest }}" >> $GITHUB_ENV
+      - name: Set up syft
+        uses: anchore/sbom-action/download-syft@v0
+      - name: Generate SBOM
+        run: syft ghcr.io/${{ github.repository_owner }}/${{ matrix.image.name }}@${DIGEST} -o cyclonedx-json > sbom.json
+      - name: Set up cosign
+        uses: sigstore/cosign-installer@v3
+      - name: Attach SBOM
+        run: cosign attach sbom --sbom sbom.json ghcr.io/${{ github.repository_owner }}/${{ matrix.image.name }}@${DIGEST}
+      - name: Sign image
+        run: cosign sign --yes ghcr.io/${{ github.repository_owner }}/${{ matrix.image.name }}@${DIGEST}
