@@ -45,7 +45,7 @@ jobs:
             dsf-fhir/dsf-fhir-server-jetty/docker/lib/*.jar
             dsf-fhir/dsf-fhir-server-jetty/docker/dsf_fhir.jar
 
-   codeql:
+  codeql:
     runs-on: ubuntu-latest
     permissions:
       security-events: write
