@@ -102,15 +102,16 @@ jobs:
       - name: Set up Buildx
         uses: docker/setup-buildx-action@v3
       - name: Build Docker image
-        run:  docker build -t ${{ matrix.image.name }}:${{ github.sha }} ${{ matrix.image.context }}
+        run:  docker build -t ghcr.io/${{ github.repository_owner }}/${{ matrix.image.name }}:${{ github.sha }} ${{ matrix.image.context }}
       - name: Scan Docker image with Trivy
-        uses: aquasecurity/trivy-action@0.33.1
+        uses: aquasecurity/trivy-action@0.34.2
         with:
-          image-ref: ${{ matrix.image.name }}:${{ github.sha }}
+          image-ref: ghcr.io/${{ github.repository_owner }}/${{ matrix.image.name }}:${{ github.sha }}
           format: 'sarif'
           output: 'trivy-results.sarif'
       - name: Upload Trivy scan results to GitHub Security tab
         uses: github/codeql-action/upload-sarif@v4
+        if: always()
         with:
           sarif_file: 'trivy-results.sarif'
 
