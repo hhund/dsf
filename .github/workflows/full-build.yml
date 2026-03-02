@@ -11,6 +11,35 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  codeql:
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [ 'java-kotlin', 'javascript-typescript' ]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+      - name: Set up JDK 25
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'zulu'
+          java-version: 25
+          cache: 'maven'
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v4
+        with:
+          languages: ${{ matrix.language }}
+          queries: security-extended, security-and-quality
+      - name: Minimal Maven Build
+        run: mvn package --batch-mode --fail-at-end -P!generate-source-and-javadoc-jars -Dimpsort.skip=true -Dformatter.skip=true -Dlicense.skip=true -Denforcer.skip -DskipTests -Dmaven.buildNumber.skip=true -Denforcer.skip -DskipShadePlugin=true
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v4
+        with:
+          category: "/language:${{matrix.language}}"
+
   maven-quick-build:
     runs-on: ubuntu-latest
     steps:
@@ -44,35 +73,6 @@ jobs:
             dsf-fhir/dsf-fhir-server-jetty/docker/ca/server_root_cas/*.crt
             dsf-fhir/dsf-fhir-server-jetty/docker/lib/*.jar
             dsf-fhir/dsf-fhir-server-jetty/docker/dsf_fhir.jar
-
-  codeql:
-    runs-on: ubuntu-latest
-    permissions:
-      security-events: write
-    strategy:
-      fail-fast: false
-      matrix:
-        language: [ 'java-kotlin', 'javascript-typescript' ]
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v6
-      - name: Set up JDK 25
-        uses: actions/setup-java@v5
-        with:
-          distribution: 'zulu'
-          java-version: 25
-          cache: 'maven'
-      - name: Initialize CodeQL
-        uses: github/codeql-action/init@v4
-        with:
-          languages: ${{ matrix.language }}
-          queries: security-extended, security-and-quality
-      - name: Minimal Maven Build
-        run: mvn package --batch-mode --fail-at-end -P!generate-source-and-javadoc-jars -Dimpsort.skip=true -Dformatter.skip=true -Dlicense.skip=true -Denforcer.skip -DskipTests -Dmaven.buildNumber.skip=true -Denforcer.skip -DskipShadePlugin=true
-      - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v4
-        with:
-          category: "/language:${{matrix.language}}"
 
   trivy:
     runs-on: ubuntu-latest
