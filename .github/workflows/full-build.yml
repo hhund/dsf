@@ -23,26 +23,46 @@ jobs:
           java-version: 25
           cache: 'maven'
       - name: Minimal Maven Build
-        run: mvn package --batch-mode --fail-at-end -P!generate-source-and-javadoc-jars -Dimpsort.skip=true -Dformatter.skip=true -Dlicense.skip=true -Denforcer.skip -DskipTests -Dmaven.buildNumber.skip=true -Denforcer.skip -DskipShadePlugin=true
-      - name: Upload bpe_proxy ca files
+        run: mvn install --batch-mode --fail-at-end -P!generate-source-and-javadoc-jars -Dimpsort.skip=true -Dformatter.skip=true -Dlicense.skip=true -Denforcer.skip -DskipTests -Dmaven.buildNumber.skip=true -Denforcer.skip -DskipShadePlugin=true
+#      - name: Upload bpe_proxy ca files
+#        uses: actions/upload-artifact@v6
+#        with:
+#          name: bpe_proxy
+#          path: |
+#            dsf-docker/bpe_proxy/ca/client_ca_chains/*.crt
+#            dsf-docker/bpe_proxy/ca/client_issuing_cas/*.crt
+#      - name: Upload fhir_proxy ca files
+#        uses: actions/upload-artifact@v6
+#        with:
+#          name: fhir_proxy
+#          path: |
+#            dsf-docker/fhir_proxy/ca/client_ca_chains/*.crt
+#            dsf-docker/fhir_proxy/ca/client_issuing_cas/*.crt
+#      - name: Upload target folders
+#        uses: actions/upload-artifact@v6
+#        with:
+#          name: target
+#          path: ./**/target
+      - name: Upload quick-build results
         uses: actions/upload-artifact@v6
         with:
-          name: bpe_proxy
+          name: quick_build
           path: |
+            ./**/target
             dsf-docker/bpe_proxy/ca/client_ca_chains/*.crt
             dsf-docker/bpe_proxy/ca/client_issuing_cas/*.crt
-      - name: Upload fhir_proxy ca files
-        uses: actions/upload-artifact@v6
-        with:
-          name: fhir_proxy
-          path: |
             dsf-docker/fhir_proxy/ca/client_ca_chains/*.crt
             dsf-docker/fhir_proxy/ca/client_issuing_cas/*.crt
-      - name: Upload target folders
-        uses: actions/upload-artifact@v6
-        with:
-          name: target
-          path: ./**/target
+            dsf-bpe/dsf-bpe-server-jetty/docker/api/v1/*.jar
+            dsf-bpe/dsf-bpe-server-jetty/docker/api/v2/*.jar
+            dsf-bpe/dsf-bpe-server-jetty/docker/ca/client_ca_chains/*.crt
+            dsf-bpe/dsf-bpe-server-jetty/docker/ca/server_root_cas/*.crt
+            dsf-bpe/dsf-bpe-server-jetty/docker/lib/*.jar
+            dsf-bpe/dsf-bpe-server-jetty/docker/dsf_bpe.jar
+            dsf-fhir/dsf-fhir-server-jetty/docker/ca/client_ca_chains/*.crt
+            dsf-fhir/dsf-fhir-server-jetty/docker/ca/server_root_cas/*.crt
+            dsf-fhir/dsf-fhir-server-jetty/docker/lib/*.jar
+            dsf-fhir/dsf-fhir-server-jetty/docker/dsf_fhir.jar
 
   proxy-docker-build:
     # if: github.event.pull_request.merged == true
@@ -62,11 +82,16 @@ jobs:
     steps:
       - name: Checkout repository 
         uses: actions/checkout@v6
-      - name: Download ca files
+#      - name: Download ca files
+#        uses: actions/download-artifact/@v7
+#        with:
+#            name: ${{ matrix.image.name }}
+#            path: ${{ matrix.image.context }}/ca/
+      - name: Download quick-build results
         uses: actions/download-artifact/@v7
         with:
-          name: ${{ matrix.image.name }}
-          path: ${{ matrix.image.context }}/ca/
+          name: quick_build
+          path: ./
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
       - name: Set up Buildx
@@ -101,7 +126,7 @@ jobs:
         run: cosign sign --yes ghcr.io/${{ github.repository_owner }}/${{ matrix.image.name }}@${DIGEST}
 
   codeql:
-    if: false
+    if: false # TODO remove
     runs-on: ubuntu-latest
     needs: maven-quick-build
     permissions:
@@ -113,10 +138,15 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
-      - name: Download target folders
+#      - name: Download target folders
+#        uses: actions/download-artifact/@v7
+#        with:
+#          name: target
+#          path: ./
+      - name: Download quick-build results
         uses: actions/download-artifact/@v7
         with:
-          name: target
+          name: quick_build
           path: ./
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v4
@@ -134,10 +164,15 @@ jobs:
     steps:
       - name: Checkout repository 
         uses: actions/checkout@v6
-      - name: Download target folders
+#      - name: Download target folders
+#        uses: actions/download-artifact/@v7
+#        with:
+#          name: target
+#          path: ./
+      - name: Download quick-build results
         uses: actions/download-artifact/@v7
         with:
-          name: target
+          name: quick_build
           path: ./
       - name: Set up JDK 25
         uses: actions/setup-java@v5
@@ -147,31 +182,31 @@ jobs:
           cache: 'maven'
       - name: Full Maven Build
         run: mvn install --batch-mode --fail-at-end -DforkCount=2
-      - name: Upload bpe files
-        uses: actions/upload-artifact@v6
-        with:
-          name: bpe
-          path: |
-            dsf-bpe/dsf-bpe-server-jetty/docker/api/v1/*.jar
-            dsf-bpe/dsf-bpe-server-jetty/docker/api/v2/*.jar
-            dsf-bpe/dsf-bpe-server-jetty/docker/ca/client_ca_chains/*.crt
-            dsf-bpe/dsf-bpe-server-jetty/docker/ca/server_root_cas/*.crt
-            dsf-bpe/dsf-bpe-server-jetty/docker/lib/*.jar
-            dsf-bpe/dsf-bpe-server-jetty/docker/dsf_bpe.jar
-      - name: Upload fhir files
-        uses: actions/upload-artifact@v6
-        with:
-          name: fhir
-          path: |
-            dsf-fhir/dsf-fhir-server-jetty/docker/ca/client_ca_chains/*.crt
-            dsf-fhir/dsf-fhir-server-jetty/docker/ca/server_root_cas/*.crt
-            dsf-fhir/dsf-fhir-server-jetty/docker/lib/*.jar
-            dsf-fhir/dsf-fhir-server-jetty/docker/dsf_fhir.jar
+#      - name: Upload bpe files
+#        uses: actions/upload-artifact@v6
+#        with:
+#          name: bpe
+#          path: |
+#            dsf-bpe/dsf-bpe-server-jetty/docker/api/v1/*.jar
+#            dsf-bpe/dsf-bpe-server-jetty/docker/api/v2/*.jar
+#            dsf-bpe/dsf-bpe-server-jetty/docker/ca/client_ca_chains/*.crt
+#            dsf-bpe/dsf-bpe-server-jetty/docker/ca/server_root_cas/*.crt
+#            dsf-bpe/dsf-bpe-server-jetty/docker/lib/*.jar
+#            dsf-bpe/dsf-bpe-server-jetty/docker/dsf_bpe.jar
+#      - name: Upload fhir files
+#        uses: actions/upload-artifact@v6
+#        with:
+#          name: fhir
+#          path: |
+#            dsf-fhir/dsf-fhir-server-jetty/docker/ca/client_ca_chains/*.crt
+#            dsf-fhir/dsf-fhir-server-jetty/docker/ca/server_root_cas/*.crt
+#            dsf-fhir/dsf-fhir-server-jetty/docker/lib/*.jar
+#            dsf-fhir/dsf-fhir-server-jetty/docker/dsf_fhir.jar
 
   app-docker-build:
     # if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
-    needs: maven-full-build
+    needs: [maven-quick-build, maven-full-build]
     permissions:
       packages: write
       id-token: write
@@ -186,11 +221,16 @@ jobs:
     steps:
       - name: Checkout repository 
         uses: actions/checkout@v6
-      - name: Download ca and jar files
+#      - name: Download ca and jar files
+#        uses: actions/download-artifact/@v7
+#        with:
+#          name: ${{ matrix.image.name }}
+#          path: ${{ matrix.image.context }}
+      - name: Download quick-build results
         uses: actions/download-artifact/@v7
         with:
-          name: ${{ matrix.image.name }}
-          path: ${{ matrix.image.context }}
+          name: quick_build
+          path: ./
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
       - name: Set up Buildx
@@ -225,3 +265,42 @@ jobs:
         run: cosign attest --yes --predicate sbom.json --type cyclonedx ghcr.io/${{ github.repository_owner }}/${{ matrix.image.name }}@${DIGEST}
       - name: Sign image
         run: cosign sign --yes ghcr.io/${{ github.repository_owner }}/${{ matrix.image.name }}@${DIGEST}
+
+  trivy:
+    runs-on: ubuntu-latest
+    needs: [maven-quick-build, maven-full-build]
+    permissions:
+      security-events: write
+    strategy:
+      fail-fast: false
+      matrix:
+        image:
+          - name: bpe_proxy
+            context: dsf-docker/bpe_proxy
+          - name: fhir_proxy
+            context: dsf-docker/fhir_proxy
+          - name: bpe
+            context: dsf-bpe/dsf-bpe-server-jetty/docker
+          - name: fhir
+            context: dsf-fhir/dsf-fhir-server-jetty/docker
+    steps:
+      - name: Checkout repository 
+        uses: actions/checkout@v6
+      - name: Download quick-build results
+        uses: actions/download-artifact/@v7
+        with:
+          name: quick_build
+          path: ./
+      - name: Set up Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Build Docker image
+        run: |
+          docker build -t ${{ matrix.image.name }}:${{ github.sha }} ${{ matrix.image.context }}
+      - name: Scan Docker image with Trivy
+        uses: aquasecurity/trivy-action@0.20.0
+        with:
+          image-ref: ${{ matrix.image }}:${{ github.sha }}
+          format: sarif
+          output: trivy-results.sarif
+          severity: 'CRITICAL,HIGH'
+          timeout: '15m0s'
