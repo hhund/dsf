@@ -45,64 +45,7 @@ jobs:
             dsf-fhir/dsf-fhir-server-jetty/docker/lib/*.jar
             dsf-fhir/dsf-fhir-server-jetty/docker/dsf_fhir.jar
 
-  proxy-docker-build:
-    # if: github.event.pull_request.merged == true
-    if: false
-    runs-on: ubuntu-latest
-    needs: maven-quick-build
-    permissions:
-      packages: write
-      id-token: write
-    strategy:
-      fail-fast: false
-      matrix:
-        image:
-          - name: bpe_proxy
-            context: dsf-docker/bpe_proxy
-          - name: fhir_proxy
-            context: dsf-docker/fhir_proxy
-    steps:
-      - name: Checkout repository 
-        uses: actions/checkout@v6
-      - name: Download quick-build results
-        uses: actions/download-artifact/@v7
-        with:
-          name: quick_build
-          path: ./
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
-      - name: Set up Buildx
-        uses: docker/setup-buildx-action@v3
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Build and Push
-        uses: docker/build-push-action@v6
-        id: push
-        with:
-          push: true
-          tags: ghcr.io/${{ github.repository_owner }}/${{ matrix.image.name }}:develop
-          context: ${{ matrix.image.context }}
-          platforms: linux/amd64,linux/arm64
-          cache-from: type=gha,scope=${{ matrix.image.name }}
-          cache-to: type=gha,mode=max,scope=${{ matrix.image.name }}
-      - name: Export digest
-        run: echo "DIGEST=${{ steps.push.outputs.digest }}" >> $GITHUB_ENV
-      - name: Set up syft
-        uses: anchore/sbom-action/download-syft@v0
-      - name: Generate SBOM
-        run: syft ghcr.io/${{ github.repository_owner }}/${{ matrix.image.name }}@${DIGEST} -o cyclonedx-json > sbom.json
-      - name: Set up cosign
-        uses: sigstore/cosign-installer@v3
-      - name: Attach SBOM
-        run: cosign attest --yes --predicate sbom.json --type cyclonedx ghcr.io/${{ github.repository_owner }}/${{ matrix.image.name }}@${DIGEST}
-      - name: Sign image
-        run: cosign sign --yes ghcr.io/${{ github.repository_owner }}/${{ matrix.image.name }}@${DIGEST}
-
-  codeql:
+   codeql:
     runs-on: ubuntu-latest
     permissions:
       security-events: write
