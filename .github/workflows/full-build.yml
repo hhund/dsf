@@ -55,7 +55,7 @@ jobs:
           java-version: 25
           cache: 'maven'
       - name: Minimal Maven Build
-        run: mvn install --batch-mode --fail-at-end -P!generate-source-and-javadoc-jars -Dimpsort.skip=true -Dformatter.skip=true -Dlicense.skip=true -Denforcer.skip -DskipTests -Dmaven.buildNumber.skip=true -DskipShadePlugin=true
+        run: mvn install --batch-mode --fail-at-end -P!generate-source-and-javadoc-jars -Dimpsort.skip=true -Dformatter.skip=true -Dlicense.skip=true -Denforcer.skip -DskipTests -DskipShadePlugin=true
       - name: Upload quick-build results
         uses: actions/upload-artifact@v6
         with:
