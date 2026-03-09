@@ -45,9 +45,6 @@ jobs:
     steps:
       - name: Checkout repository 
         uses: actions/checkout@v6
-        with:
-          fetch-depth: 1
-          ref: ${{ github.ref }}
       - name: Set up JDK 25
         uses: actions/setup-java@v5
         with:
@@ -55,7 +52,7 @@ jobs:
           java-version: 25
           cache: 'maven'
       - name: Minimal Maven Build
-        run: mvn install --batch-mode --fail-at-end -P!generate-source-and-javadoc-jars -Dimpsort.skip=true -Dformatter.skip=true -Dlicense.skip=true -Denforcer.skip -DskipTests -DskipShadePlugin=true
+        run: mvn install --batch-mode --fail-at-end -P!generate-source-and-javadoc-jars -Dimpsort.skip=true -Dformatter.skip=true -Dlicense.skip=true -Denforcer.skip -DskipTests -Dmaven.buildNumber.skip=true -DskipShadePlugin=true -DbuildNumber=${GITHUB_SHA} -DscmBranch=${GITHUB_HEAD_REF:-${GITHUB_REF_NAME}}
       - name: Upload quick-build results
         uses: actions/upload-artifact@v6
         with:
@@ -95,7 +92,7 @@ jobs:
           - name: Integration Tests
             cmd: mvn failsafe:integration-test --fail-at-end -P!generate-source-and-javadoc-jars -Dimpsort.skip=true -Dformatter.skip=true -Dlicense.skip=true -Denforcer.skip -Dmaven.buildNumber.skip=true -DskipShadePlugin=true -Dfailsafe.includes=**/*IntegrationTest -DforkCount=2
           - name: Unit Tests
-            cmd: mvn surefire:test --fail-at-end -P!generate-source-and-javadoc-jars -Dimpsort.skip=true -Dformatter.skip=true -Dlicense.skip=true -Denforcer.skip -Dmaven.buildNumber.skip=true -DskipShadePlugin=true
+            cmd: mvn dependency:properties surefire:test --fail-at-end -P!generate-source-and-javadoc-jars -Dimpsort.skip=true -Dformatter.skip=true -Dlicense.skip=true -Denforcer.skip -Dmaven.buildNumber.skip=true -DskipShadePlugin=true
     steps:
       - name: Checkout repository 
         uses: actions/checkout@v6
