@@ -212,8 +212,8 @@ jobs:
           tags: |
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
-            type=raw,value=latest,enable=${{ !contains(github.ref_name, '-') }}
-            type=raw,value=develop,enable=${{ github.event_name == 'pull_request' }}
+            type=raw,value=latest,enable=${{ github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v') && !contains(github.ref_name, '-') }}
+            type=raw,value=develop,enable=${{ github.event_name == 'pull_request' && github.event.pull_request.base.ref == 'develop' }}
           # full version (1.2.3, 1.2.3-RC1, etc)
           # minor version (1.2)
           # latest only for stable releases
