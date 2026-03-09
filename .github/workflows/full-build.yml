@@ -19,6 +19,7 @@ jobs:
       fail-fast: false
       matrix:
         language: [ 'java-kotlin', 'javascript-typescript' ]
+    name: ${{ matrix.language }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
@@ -97,6 +98,7 @@ jobs:
             cmd: mvn failsafe:integration-test --fail-at-end -P!generate-source-and-javadoc-jars -Dimpsort.skip=true -Dformatter.skip=true -Dlicense.skip=true -Denforcer.skip -Dmaven.buildNumber.skip=true -DskipShadePlugin=true -Dfailsafe.includes=dev/dsf/bpe/**/*IntegrationTest -DforkCount=2
           - name: Unit Tests
             cmd: mvn dependency:properties surefire:test --fail-at-end -P!generate-source-and-javadoc-jars -Dimpsort.skip=true -Dformatter.skip=true -Dlicense.skip=true -Denforcer.skip -Dmaven.buildNumber.skip=true -DskipShadePlugin=true
+    name: ${{ matrix.mvn.name }}
     steps:
       - name: Checkout repository 
         uses: actions/checkout@v6
@@ -131,6 +133,7 @@ jobs:
             context: dsf-bpe/dsf-bpe-server-jetty/docker
           - name: fhir
             context: dsf-fhir/dsf-fhir-server-jetty/docker
+    name: ${{ matrix.image.name }}
     steps:
       - name: Checkout repository 
         uses: actions/checkout@v6
@@ -174,6 +177,7 @@ jobs:
             context: dsf-docker/bpe_proxy
           - name: fhir_proxy
             context: dsf-docker/fhir_proxy
+    name: ${{ matrix.image.name }}
     steps:
       - name: Checkout repository 
         uses: actions/checkout@v6
