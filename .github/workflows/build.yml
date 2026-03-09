@@ -103,6 +103,7 @@ jobs:
           - name: Unit Tests
             cmd: mvn dependency:properties surefire:test --fail-at-end -P!generate-source-and-javadoc-jars -Dimpsort.skip=true -Dformatter.skip=true -Dlicense.skip=true -Denforcer.skip -Dmaven.buildNumber.skip=true -DskipShadePlugin=true
     name: ${{ matrix.mvn.name }}
+    timeout-minutes: 8
     steps:
       - name: Checkout repository 
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
