@@ -26,22 +26,22 @@ jobs:
     name: ${{ matrix.language }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - name: Set up JDK 25
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0
         with:
           distribution: 'zulu'
           java-version: 25
           cache: 'maven'
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@v4
+        uses: github/codeql-action/init@0d579ffd059c29b07949a3cce3983f0780820c98 # v4.32.6
         with:
           languages: ${{ matrix.language }}
           queries: security-extended, security-and-quality
       - name: Minimal Maven Build
         run: mvn package --batch-mode --fail-at-end -P!generate-source-and-javadoc-jars -Dimpsort.skip=true -Dformatter.skip=true -Dlicense.skip=true -Denforcer.skip -DskipTests -Dmaven.buildNumber.skip=true -DskipShadePlugin=true
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v4
+        uses: github/codeql-action/analyze@0d579ffd059c29b07949a3cce3983f0780820c98 # v4.32.6
         with:
           category: "/language:${{matrix.language}}"
 
@@ -49,9 +49,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository 
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - name: Set up JDK 25
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0
         with:
           distribution: 'zulu'
           java-version: 25
@@ -59,7 +59,7 @@ jobs:
       - name: Minimal Maven Build
         run: mvn install --batch-mode --fail-at-end -P!generate-source-and-javadoc-jars -Dimpsort.skip=true -Dformatter.skip=true -Dlicense.skip=true -Denforcer.skip -DskipTests -Dmaven.buildNumber.skip=true -DskipShadePlugin=true -DbuildNumber=${GITHUB_SHA} -DscmBranch=${GITHUB_HEAD_REF:-${GITHUB_REF_NAME}}
       - name: Upload quick-build results
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         with:
           name: quick_build
           path: |
@@ -105,14 +105,14 @@ jobs:
     name: ${{ matrix.mvn.name }}
     steps:
       - name: Checkout repository 
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - name: Download quick-build results
-        uses: actions/download-artifact/@v7
+        uses: actions/download-artifact/@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3 # v8.0.0
         with:
           name: quick_build
           path: ./
       - name: Set up JDK 25
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0
         with:
           distribution: 'zulu'
           java-version: 25
@@ -140,32 +140,32 @@ jobs:
     name: ${{ matrix.image.name }}
     steps:
       - name: Checkout repository 
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - name: Download quick-build results
-        uses: actions/download-artifact/@v7
+        uses: actions/download-artifact/@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3 # v8.0.0
         with:
           name: quick_build
           path: ./
       - name: Set up Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@4d04d5d9486b7bd6fa91e7baf45bbb4f8b9deedd # v4.0.0
       - name: Build Docker image
         run:  docker build -t ghcr.io/${{ github.repository_owner }}/${{ matrix.image.name }}:${{ github.sha }} ${{ matrix.image.context }}
       - name: Scan Docker image with Trivy
-        uses: aquasecurity/trivy-action@0.34.2
+        uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1 # v0.35.0
         with:
           image-ref: ghcr.io/${{ github.repository_owner }}/${{ matrix.image.name }}:${{ github.sha }}
           format: 'sarif'
           output: 'trivy-results.sarif'
       - name: Upload Trivy scan results to GitHub Security tab
-        uses: github/codeql-action/upload-sarif@v4
+        uses: github/codeql-action/upload-sarif@0d579ffd059c29b07949a3cce3983f0780820c98 # v4.32.6
         if: always()
         with:
           sarif_file: 'trivy-results.sarif'
 
   docker-build:
-    if: |
-      (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')) ||
-      (github.event_name == 'pull_request' && github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'develop')
+    #if: |
+    #  (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')) ||
+    #  (github.event_name == 'pull_request' && github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'develop')
     runs-on: ubuntu-latest
     needs: [codeql, maven-quick, maven-full, trivy]
     permissions:
@@ -186,24 +186,24 @@ jobs:
     name: ${{ matrix.image.name }}
     steps:
       - name: Checkout repository 
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - name: Download quick-build results
-        uses: actions/download-artifact/@v7
+        uses: actions/download-artifact/@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3 # v8.0.0
         with:
           name: quick_build
           path: ./
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
+        uses: docker/setup-qemu-action@ce360397dd3f832beb865e1373c09c0e9f86d70a # v4.0.0
       - name: Set up Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@4d04d5d9486b7bd6fa91e7baf45bbb4f8b9deedd # v4.0.0
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@v3
+        uses: docker/login-action@b45d80f862d83dbcd57f89517bcf500b2ab88fb2 # v4.0.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Docker metadata
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@030e881283bb7a6894de51c315a6bfe6a94e05cf # v6.0.0
         id: meta
         with:
           images: ghcr.io/${{ github.repository_owner }}/${{ matrix.image.name }}
@@ -218,7 +218,7 @@ jobs:
           # latest only for stable releases
           # develop builds
       - name: Build and Push
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@d08e5c354a6adb9ed34480a06d141179aa583294 # v7.0.0
         id: push
         with:
           push: true
@@ -230,11 +230,11 @@ jobs:
       - name: Export digest
         run: echo "DIGEST=${{ steps.push.outputs.digest }}" >> $GITHUB_ENV
       - name: Set up syft
-        uses: anchore/sbom-action/download-syft@v0
+        uses: anchore/sbom-action/download-syft@17ae1740179002c89186b61233e0f892c3118b11 # v0.23.0
       - name: Generate SBOM
         run: syft ghcr.io/${{ github.repository_owner }}/${{ matrix.image.name }}@${DIGEST} -o cyclonedx-json > sbom.json
       - name: Set up cosign
-        uses: sigstore/cosign-installer@v3
+        uses: sigstore/cosign-installer@faadad0cce49287aee09b3a48701e75088a2c6ad # v4.0.0
       - name: Attach SBOM
         run: cosign attest --yes --predicate sbom.json --type cyclonedx ghcr.io/${{ github.repository_owner }}/${{ matrix.image.name }}@${DIGEST}
       - name: Sign image
