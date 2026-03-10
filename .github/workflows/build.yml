@@ -184,7 +184,7 @@ jobs:
             context: dsf-docker/bpe_proxy
           - name: fhir_proxy
             context: dsf-docker/fhir_proxy
-    name: ${{ matrix.image.name != '' && matrix.image.name || 'docker-build' }}
+    name: ${{ matrix.image.name }}
     steps:
       - name: Checkout repository 
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
@@ -265,7 +265,7 @@ jobs:
           gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
           gpg-passphrase: MAVEN_GPG_PASSPHRASE
       - name: Deploy to Maven Central
-        run: mvn deploy -Dimpsort.skip=true -Dformatter.skip=true -Dlicense.skip=true -DskipTests -Ppublish-to-maven-central -DbuildNumber=${GITHUB_SHA} -DscmBranch=${GITHUB_HEAD_REF:-${GITHUB_REF_NAME}}
+        run: mvn deploy -Dimpsort.skip=true -Dformatter.skip=true -Dlicense.skip=true -DskipTests -Ppublish-to-maven-central -Dmaven.buildNumber.skip=true -DbuildNumber=${GITHUB_SHA} -DscmBranch=${GITHUB_HEAD_REF:-${GITHUB_REF_NAME}}
         env:
           MAVEN_CENTRAL_USERNAME: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
           MAVEN_CENTRAL_TOKEN: ${{ secrets.MAVEN_CENTRAL_TOKEN }}
