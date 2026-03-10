@@ -90,7 +90,8 @@ jobs:
       - name: Checkout main branch
         uses: actions/checkout@v4
         with:
-          ref: main
+          #ref: main
+          ref: docker_build #TODO remove
       - name: Check if ref is main HEAD
         id: main
         run: echo "main=$([$GITHUB_SHA = $(git rev-parse HEAD)] && echo true || echo false)" >> $GITHUB_OUTPUT
