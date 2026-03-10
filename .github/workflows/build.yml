@@ -2,6 +2,7 @@ name: DSF 2.x Full Build
 
 on:
   push:
+    branches: [ "release/*", "hotfix/*" ]
     tags:
       - v[0-9]+.[0-9]+.[0-9]+
       - v[0-9]+.[0-9]+.[0-9]+-M[0-9]+
@@ -15,7 +16,7 @@ on:
 permissions: read-all
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.ref || github.run_id }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.sha }}
   cancel-in-progress: true
 
 jobs:
