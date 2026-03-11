@@ -36,6 +36,10 @@ updates:
       bouncycastle:
         patterns:
           - "org.bouncycastle*"
+      fhir:
+        patterns:
+          - "hapi-fhir*"
+          - "org.hl7.fhir*"
       testing-tools:
         patterns:
           - "org.junit*"
