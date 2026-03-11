@@ -43,8 +43,8 @@
 		<jetty.version>12.1.6</jetty.version>
 		<jersey.version>3.1.11</jersey.version>
 		<tyrus.version>2.2.2</tyrus.version>
-		<spring.version>6.2.15</spring.version>
-		<jackson.version>2.21.0</jackson.version>
+		<spring.version>6.2.16</spring.version>
+		<jackson.version>2.21.1</jackson.version>
 		<operaton.version>1.0.3</operaton.version>
 		<hapi.fhir.version.v1>5.1.0</hapi.fhir.version.v1>
 		<hapi.fhir.version.v2>8.4.2</hapi.fhir.version.v2>
@@ -183,7 +183,7 @@
 			<dependency>
 				<groupId>org.postgresql</groupId>
 				<artifactId>postgresql</artifactId>
-				<version>42.7.9</version>
+				<version>42.7.10</version>
 			</dependency>
 			<dependency>
 				<groupId>org.checkerframework</groupId>
@@ -200,7 +200,7 @@
 			<dependency>
 				<groupId>com.auth0</groupId>
 				<artifactId>java-jwt</artifactId>
-				<version>4.5.0</version>
+				<version>4.5.1</version>
 			</dependency>
 
 			<dependency>
@@ -511,12 +511,12 @@
 			<dependency>
 				<groupId>org.apache.maven</groupId>
 				<artifactId>maven-core</artifactId>
-				<version>3.9.12</version>
+				<version>3.9.13</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.maven</groupId>
 				<artifactId>maven-plugin-api</artifactId>
-				<version>3.9.12</version>
+				<version>3.9.13</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.maven.plugin-tools</groupId>
@@ -564,12 +564,12 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-surefire-plugin</artifactId>
-					<version>3.5.4</version>
+					<version>3.5.5</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-failsafe-plugin</artifactId>
-					<version>3.5.4</version>
+					<version>3.5.5</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -654,7 +654,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-shade-plugin</artifactId>
-					<version>3.6.1</version>
+					<version>3.6.2</version>
 				</plugin>
 				<plugin>
 					<groupId>dev.dsf</groupId>
