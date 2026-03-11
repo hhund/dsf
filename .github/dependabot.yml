@@ -36,6 +36,10 @@ updates:
       bouncycastle:
         patterns:
           - "org.bouncycastle*"
+      fhir:
+        patterns:
+          - "hapi-fhir*"
+          - "org.hl7.fhir*"
       testing-tools:
         patterns:
           - "org.junit*"
@@ -59,10 +63,10 @@ updates:
   # Dockerfile base image updates
   - package-ecosystem: "docker"
     directories:
-      - "/dsf-bpe/dsf-bpe-server-jetty/docker/Dockerfile"
-      - "/dsf-docker/bpe_proxy/Dockerfile"
-      - "/dsf-docker/fhir_proxy/Dockerfile"
-      - "/dsf-fhir/dsf-fhir-server-jetty/docker/Dockerfile"
+      - "/dsf-bpe/dsf-bpe-server-jetty/docker"
+      - "/dsf-docker/bpe_proxy"
+      - "/dsf-docker/fhir_proxy"
+      - "/dsf-fhir/dsf-fhir-server-jetty/docker"
     target-branch: "develop"
     schedule:
       interval: "weekly"
@@ -75,9 +79,9 @@ updates:
   # docker-compose image updates
   - package-ecosystem: "docker-compose"
     directories:
-      - "/dsf-docker-dev-setup/bpe/docker-compose.yml"
-      - "/dsf-docker-dev-setup/fhir/docker-compose.yml"
-      - "/dsf-docker-dev-setup-3dic-ttp/docker-compose.yml"
+      - "/dsf-docker-dev-setup/bpe"
+      - "/dsf-docker-dev-setup/fhir"
+      - "/dsf-docker-dev-setup-3dic-ttp"
     target-branch: "develop"
     schedule:
       interval: "weekly"
