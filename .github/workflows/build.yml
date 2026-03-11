@@ -90,7 +90,7 @@ jobs:
         id: version
         run: echo "version=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive org.codehaus.mojo:exec-maven-plugin:3.6.3:exec)" >> $GITHUB_OUTPUT
       - name: Checkout main branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: main
       - name: Check if ref is main HEAD
