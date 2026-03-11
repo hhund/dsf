@@ -45,11 +45,11 @@
 		<tyrus.version>2.2.2</tyrus.version>
 		<spring.version>6.2.15</spring.version>
 		<jackson.version>2.21.0</jackson.version>
-		<operaton.version>1.0.3</operaton.version>
+		<operaton.version>1.1.0</operaton.version>
 		<hapi.fhir.version.v1>5.1.0</hapi.fhir.version.v1>
-		<hapi.fhir.version.v2>8.4.2</hapi.fhir.version.v2>
+		<hapi.fhir.version.v2>8.8.0</hapi.fhir.version.v2>
 		<hapi.fhir.org.hl7.version.v2>6.5.27</hapi.fhir.org.hl7.version.v2>
-		<hapi.fhir.version>8.4.2</hapi.fhir.version>
+		<hapi.fhir.version>8.8.0</hapi.fhir.version>
 		<bouncycastle.version>1.83</bouncycastle.version>
 		<crypto-utils.version.v1>3.8.0</crypto-utils.version.v1>
 		<crypto-utils.version.v2>5.2.1</crypto-utils.version.v2>
@@ -156,7 +156,7 @@
 			<dependency>
 				<groupId>org.mockito</groupId>
 				<artifactId>mockito-core</artifactId>
-				<version>5.21.0</version>
+				<version>5.22.0</version>
 			</dependency>
 			<dependency>
 				<groupId>org.bouncycastle</groupId>
@@ -188,7 +188,7 @@
 			<dependency>
 				<groupId>org.checkerframework</groupId>
 				<artifactId>checker-qual</artifactId>
-				<version>3.53.0</version>
+				<version>2.11.1</version>
 			</dependency>
 
 			<dependency>
@@ -411,7 +411,7 @@
 			<dependency>
 				<groupId>org.tukaani</groupId>
 				<artifactId>xz</artifactId>
-				<version>1.11</version>
+				<version>1.12</version>
 			</dependency>
 
 			<!-- managing out-dated dependencies from hapi fhir -->
@@ -453,7 +453,7 @@
 			<dependency>
 				<groupId>com.nimbusds</groupId>
 				<artifactId>nimbus-jose-jwt</artifactId>
-				<version>10.7</version>
+				<version>10.8</version>
 			</dependency>
 
 			<dependency>
@@ -486,7 +486,7 @@
 			<dependency>
 				<groupId>org.yaml</groupId>
 				<artifactId>snakeyaml</artifactId>
-				<version>2.5</version>
+				<version>2.6</version>
 			</dependency>
 
 			<dependency>
@@ -574,7 +574,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-resources-plugin</artifactId>
-					<version>3.4.0</version>
+					<version>3.5.0</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -599,7 +599,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-dependency-plugin</artifactId>
-					<version>3.9.0</version>
+					<version>3.10.0</version>
 				</plugin>
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
