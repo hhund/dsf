@@ -90,7 +90,7 @@ jobs:
         id: version
         run: echo "version=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive org.codehaus.mojo:exec-maven-plugin:3.6.3:exec)" >> $GITHUB_OUTPUT
       - name: Checkout main branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           ref: main
       - name: Check if ref is main HEAD
@@ -247,11 +247,11 @@ jobs:
       - name: Export digest
         run: echo "DIGEST=${{ steps.push.outputs.digest }}" >> $GITHUB_ENV
       - name: Set up syft
-        uses: anchore/sbom-action/download-syft@17ae1740179002c89186b61233e0f892c3118b11 # v0.23.0
+        uses: anchore/sbom-action/download-syft@57aae528053a48a3f6235f2d9461b05fbcb7366d # v0.23.1
       - name: Generate SBOM
         run: syft ghcr.io/${{ github.repository_owner }}/${{ matrix.image.name }}@${DIGEST} -o cyclonedx-json > sbom.json
       - name: Set up cosign
-        uses: sigstore/cosign-installer@faadad0cce49287aee09b3a48701e75088a2c6ad # v4.0.0
+        uses: sigstore/cosign-installer@ba7bc0a3fef59531c69a25acd34668d6d3fe6f22 # v4.1.0
       - name: Attach SBOM
         run: cosign attest --yes --predicate sbom.json --type cyclonedx ghcr.io/${{ github.repository_owner }}/${{ matrix.image.name }}@${DIGEST}
       - name: Sign image
