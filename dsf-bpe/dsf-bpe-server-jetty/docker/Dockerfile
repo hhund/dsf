@@ -23,7 +23,7 @@ RUN chown root:2202 ./ && \
     chmod 1775 ./log
 
 
-FROM azul/zulu-openjdk:25-jre-headless@sha256:3d81b099af987b3715536734ea24e95c65cc2a3d539f4ddba402645abef88ed3
+FROM azul/zulu-openjdk:25-jre-headless@sha256:c8e35e74e2cfbdeffb4e4850123c41378d3ec0a6d80f17d2f9f3a9293f9236e6
 LABEL org.opencontainers.image.source=https://github.com/datasharingframework/dsf
 LABEL org.opencontainers.image.description="DSF BPE Server"
 LABEL org.opencontainers.image.licenses="Apache License, Version 2.0"
